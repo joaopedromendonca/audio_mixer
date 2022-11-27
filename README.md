@@ -1,3 +1,3 @@
-# An audio filtering tool built in C
+# An audio mixer tool built in C
 
 Author: João Pedro Mendonça Oliveira
