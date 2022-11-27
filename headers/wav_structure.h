@@ -28,9 +28,9 @@ typedef struct data
     void *Audio_data;
 } data;
 
-typedef struct Wave_t
+typedef struct Wav_t
 {
     RIFF _riff;
     fmt _fmt;
     data _data;
-} Wave_t;
+} Wav_t;
