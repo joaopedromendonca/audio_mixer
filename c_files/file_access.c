@@ -35,7 +35,7 @@ void print_wav(Wav_t *wav)
 Wav_t *read_wave_file(Wav_t *wav_file, char *file_name)
 {
     // Left and Right channels samples arrays
-    char *L, *R;
+    int16_t *L, *R;
 
     printf("------------------------Reading file: %s", file_name);
 
@@ -65,22 +65,51 @@ Wav_t *read_wave_file(Wav_t *wav_file, char *file_name)
     // Start reading audio data
     printf("\nStart the reading of the audio data\n");
 
+    size_t size_LR = 0;
+    L = malloc(sizeof(int16_t));
+    R = malloc(sizeof(int16_t));
+    size_LR++;
+
+    printf("\nInit size of L: %lu\n", sizeof(L));
     // Consider the reading of samples with 2 channels
-    // int isOver = 0;
-    // while (!isOver)
-    // {
+    int i = 0;
+    int16_t *tmp_reader = malloc(sizeof(int16_t));
+    while (i < wav_file->_data.SubChunk2Size)
+    {
 
-    //     fread(wav_file->_data.Audio_data, sizeof(char), 4, file);
-    //     fread(wav_file->_data.Audio_data, sizeof(char), 4, file);
-    // }
+        // Reading data to the samples arrays
+        fread(tmp_reader, sizeof(int16_t), 1, file);
+        L[i] = *tmp_reader;
+        fread(tmp_reader, sizeof(int16_t), 1, file);
+        R[i] = *tmp_reader;
 
+        // Reallocation of the samples arrays
+        size_LR++;
+        L = realloc(L, size_LR * sizeof(int16_t));
+        R = realloc(R, size_LR * sizeof(int16_t));
+
+        // In case realloc fails
+        if (L == NULL || R == NULL)
+        {
+            fprintf(stderr, "Array not alocated!");
+            exit(1);
+        }
+
+        i++;
+    }
+    for (int i = 0; i < wav_file->_data.SubChunk2Size; i++)
+    {
+        printf("\nLeft: %i - Right: %i\n", L[i], R[i]);
+    }
+    printf("\nLeft: %i - Right: %i\n", L[3], L[4]);
     return wav_file;
 }
 
-// int main(int argc, char const *argv[])
-// {
-//     wav_t *wav = (Wave_t *)malloc(sizeof(Wave_t));
-//     // strcpy(wav->_riff.ChunkID, "xdxd");
-//     wav = read_wav_file(wav, "music.wav");
-//     return 0;
-// }
+int main(int argc, char const *argv[])
+{
+    Wav_t *wav = (Wav_t *)malloc(sizeof(Wav_t));
+    // strcpy(wav->_riff.ChunkID, "xdxd");
+    char *path = realpath("../samples/music.wav", NULL);
+    wav = read_wave_file(wav, path);
+    return 0;
+}
