@@ -70,11 +70,28 @@ Wav_t *read_wave_file(Wav_t *wav_file, char *file_name)
     R = malloc(sizeof(int16_t));
     size_LR++;
 
-    printf("\nInit size of L: %lu\n", sizeof(L));
     // Consider the reading of samples with 2 channels
     int i = 0;
     int16_t *tmp_reader = malloc(sizeof(int16_t));
-    while (i < wav_file->_data.SubChunk2Size)
+
+    /*
+    Each iteration gets Left and Right channel samples
+    According to wav information, the field Subchunk2Size is calculated this way:
+
+        Subchunk2Size = NumSamples * NumChannels * BitsPerSample/8
+
+    Since we have 2 channels, and the last argument means the size of each sample in bytes
+    We have this:
+
+        NumSamples = Subchunk2Size / (NumChannels*BitsPerSample/8)
+
+    That is:
+
+        NumSamples = Subchunk2Size / (2*2)
+
+    */
+    int NumSamples = wav_file->_data.SubChunk2Size / 4;
+    while (i < NumSamples)
     {
 
         // Reading data to the samples arrays
@@ -91,25 +108,18 @@ Wav_t *read_wave_file(Wav_t *wav_file, char *file_name)
         // In case realloc fails
         if (L == NULL || R == NULL)
         {
-            fprintf(stderr, "Array not alocated!");
+            fprintf(stderr, "Array could not be alocated!");
             exit(1);
         }
-
         i++;
     }
-    for (int i = 0; i < wav_file->_data.SubChunk2Size; i++)
-    {
-        printf("\nLeft: %i - Right: %i\n", L[i], R[i]);
-    }
-    printf("\nLeft: %i - Right: %i\n", L[3], L[4]);
-    return wav_file;
-}
+    size_LR--;
 
-int main(int argc, char const *argv[])
-{
-    Wav_t *wav = (Wav_t *)malloc(sizeof(Wav_t));
-    // strcpy(wav->_riff.ChunkID, "xdxd");
-    char *path = realpath("../samples/music.wav", NULL);
-    wav = read_wave_file(wav, path);
-    return 0;
+    for (int i = size_LR - 200; i < size_LR; i++)
+    {
+        printf("\n%d | x: %d", L[i], R[i]);
+    }
+    printf("\n\nChecksum of read data: %d/%d", (int)size_LR, NumSamples);
+
+    return wav_file;
 }
