@@ -3,6 +3,10 @@
     "source_location": "cpp",
     "wave_structure.h": "c",
     "file_access.h": "c",
-    "wav_structure.h": "c"
+    "wav_structure.h": "c",
+    "stdio.h": "c",
+    "unistd.h": "c",
+    "wavinfo.h": "c",
+    "stdlib.h": "c"
   }
 }

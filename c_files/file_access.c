@@ -1,37 +1,5 @@
 #include "../headers/file_access.h"
 
-void print_wav(Wav_t *wav)
-{
-    // Printing RIFF block
-    printf("\nRIFF: ");
-    for (int i = 0; i < 4; i++)
-        printf("%c", wav->_riff.ChunkID[i]);
-    printf("\nChunkSize: %d", wav->_riff.ChunkSize);
-    printf("\nFormat: ");
-    for (int i = 0; i < 4; i++)
-        printf("%c", wav->_riff.Format[i]);
-
-    // Printing fmt block
-    printf("\n\nSubChunk1ID: ");
-    for (int i = 0; i < 4; i++)
-        printf("%c", wav->_fmt.SubChunk1ID[i]);
-    printf("\nSubChunk1Size: %d", wav->_fmt.SubChunk1Size);
-    printf("\nAudio format: %d", wav->_fmt.Audio_format);
-    printf("\nNumber of chanels: %d", wav->_fmt.Num_chanels);
-    printf("\nSample rate: %d", wav->_fmt.Sample_rate);
-    printf("\nByte rate: %d", wav->_fmt.Byte_rate);
-    printf("\nBlock align: %d", wav->_fmt.Block_align);
-    printf("\nBits per sample: %d", wav->_fmt.Bits_per_sample);
-
-    // Printing data block
-    printf("\nSubChunk2ID: ");
-    for (int i = 0; i < 4; i++)
-        printf("%c", wav->_data.SubChunk2ID[i]);
-    printf("\nSubChunk2Size: %d", wav->_data.SubChunk2Size);
-    printf("\n------------------------End of header");
-    printf("\n");
-}
-
 Wav_t *read_wave_file(Wav_t *wav_file, char *file_name)
 {
     // Left and Right channels samples arrays
@@ -61,7 +29,6 @@ Wav_t *read_wave_file(Wav_t *wav_file, char *file_name)
     fread(wav_file->_data.SubChunk2ID, sizeof(char), 4, file);
     fread(&wav_file->_data.SubChunk2Size, sizeof(uint32_t), 1, file);
 
-    print_wav(wav_file);
     // Start reading audio data
     printf("\nStart the reading of the audio data\n");
 
@@ -115,11 +82,12 @@ Wav_t *read_wave_file(Wav_t *wav_file, char *file_name)
     }
     size_LR--;
 
-    for (int i = size_LR - 200; i < size_LR; i++)
-    {
-        printf("\n%d | x: %d", L[i], R[i]);
-    }
-    printf("\n\nChecksum of read data: %d/%d", (int)size_LR, NumSamples);
+    // Code below for testing data sample persistence
+    // for (int i = size_LR - 200; i < size_LR; i++)
+    // {
+    //     printf("\n%d | x: %d", L[i], R[i]);
+    // }
+    // printf("\n\nChecksum of read data: %d/%d", (int)size_LR, NumSamples);
 
     return wav_file;
 }
