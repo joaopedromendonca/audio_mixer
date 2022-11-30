@@ -2,6 +2,7 @@
   "files.associations": {
     "source_location": "cpp",
     "wave_structure.h": "c",
-    "file_access.h": "c"
+    "file_access.h": "c",
+    "wav_structure.h": "c"
   }
 }
