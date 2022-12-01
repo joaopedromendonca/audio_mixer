@@ -32,11 +32,37 @@ void print_wav(Wav_t *wav)
     printf("\n");
 }
 
-int main(int argc, char const *argv[])
+int main(int argc, char **argv)
 {
     Wav_t *wav = (Wav_t *)malloc(sizeof(Wav_t));
-    char *path = realpath("../samples/music.wav", NULL);
-    wav = read_wave_file(wav, path);
-    print_wav(wav);
+    int c, i_flag = 0;
+    while ((c = getopt(argc, argv, "i:")) != -1)
+    {
+        switch (c)
+        {
+        case 'i':
+            if (optarg != NULL)
+                // NOTE: files must be in the sample folder
+                // get the absolute path to the file in the samples folder
+                i_flag = 1;
+            break;
+        default:
+            break;
+        }
+    }
+
+    if (i_flag == 1)
+    {
+        char path[100] = "../samples/";
+        strcpy(path, realpath(strcat(path, optarg), NULL));
+        printf("Reading information from file %s\n", path);
+        wav = read_wave_file(wav, path);
+        print_wav(wav);
+    }
+    else
+    {
+        printf("The program requires the -i option followed by the wav filename. %s", optopt);
+    }
+    // char *path = realpath("../samples/music.wav", NULL);
     return 0;
 }
